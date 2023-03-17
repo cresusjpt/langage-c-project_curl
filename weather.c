@@ -25,9 +25,7 @@ int forecast(GPS gps){
 
     sprintf(url, "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/3hourly?lat=%s&lon=%s", gps.lat, gps.lon);
 
-    fprintf(stdout,"%s", url);
-    fprintf(stdout,"LAT %s", gps.lat);
-    fprintf(stdout,"LON %s", gps.lon);
+    //fprintf(stdout,"%s", url);
 
     curl = curl_easy_init();
 

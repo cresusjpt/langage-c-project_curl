@@ -14,6 +14,23 @@ static size_t ecrire_geocode(char *contents, size_t size, size_t nmemb, void *us
     return size * nmemb;
 }
 
+void removeChars(char *s, char c)
+{
+    int writer = 0, reader = 0;
+
+    while (s[reader])
+    {
+        if (s[reader]!=c)
+        {
+            s[writer++] = s[reader];
+        }
+
+        reader++;
+    }
+
+    s[writer]=0;
+}
+
 GPS getLatLong(){
     struct json_tree json_tree = { 0 };
     FILE *f = fopen("geocode.json","r");
@@ -34,8 +51,18 @@ GPS getLatLong(){
         fclose(f);
 
         rjson(str, &json_tree); /* rjson reads json into a tree */
-        gps.lon = to_string_pointer(&json_tree, query(&json_tree, "/0/lon"));
-        gps.lat = to_string_pointer(&json_tree, query(&json_tree, "/0/lat"));
+
+        gps.lon = (char *) calloc(strlen(to_string_pointer(&json_tree, query(&json_tree, "/0/lon"))),sizeof(char));
+        gps.lat = (char *) calloc(strlen(to_string_pointer(&json_tree, query(&json_tree, "/0/lat"))),sizeof(char));
+
+        sprintf(gps.lon,"%s", to_string_pointer(&json_tree, query(&json_tree, "/0/lon")));
+        sprintf(gps.lat,"%s", to_string_pointer(&json_tree, query(&json_tree, "/0/lat")));
+
+        removeChars(gps.lon, '"');
+        removeChars(gps.lat, '"');
+
+        fprintf(stdout, "%s\n", gps.lon);
+        fprintf(stdout, "%s\n", gps.lat);
     }
 
     return gps;
